@@ -120,8 +120,15 @@ export default function CasosPage() {
   }, []);
 
   return (
+    
     <div className="container bg-white shadow p-4 rounded" style={{ width: '100%', maxWidth: 900 }}>
 
+      <button className="btn btn-outline-danger btn-sm" onClick={() => {
+        localStorage.removeItem('usuario');
+        navigate('/login');
+      }}>
+        Cerrar sesión
+      </button>
 
       <div className="d-flex justify-content-end mb-3 gap-2">
         <Link to="/reporte-casos" className="btn btn-outline-primary btn-sm">

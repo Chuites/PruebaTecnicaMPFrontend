@@ -20,11 +20,20 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="container mt-5" style={{ maxWidth: 400 }}>
-      <h3 className="mb-3">🔐 Iniciar Sesión</h3>
-      <input className="form-control mb-2" placeholder="Correo" onChange={e => setCorreo(e.target.value)} />
-      <input className="form-control mb-3" type="password" placeholder="Contraseña" onChange={e => setPassword(e.target.value)} />
-      <button className="btn btn-primary w-100" onClick={login}>Ingresar</button>
+    <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh', backgroundColor: '#ffffffff' }}>
+      <div className="card shadow p-4" style={{ width: 350 }}>
+        <h4 className="mb-4 text-center">🔐 Iniciar Sesión</h4>
+        <div className="mb-3">
+          <label className="form-label">Correo</label>
+          <input className="form-control" type="email" onChange={e => setCorreo(e.target.value)} />
+        </div>
+        <div className="mb-3">
+          <label className="form-label">Contraseña</label>
+          <input className="form-control" type="password" onChange={e => setPassword(e.target.value)} />
+        </div>
+        <button className="btn btn-primary w-100" onClick={login}>Ingresar</button>
+      </div>
     </div>
   );
+
 }
