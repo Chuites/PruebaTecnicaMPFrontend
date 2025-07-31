@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import api from '../api/axiosInstance';
 import CasosTable from '../components/CasosTable';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+
 
 
 
@@ -120,6 +122,15 @@ export default function CasosPage() {
   return (
     <div className="container bg-white shadow p-4 rounded" style={{ width: '100%', maxWidth: 900 }}>
 
+
+      <div className="d-flex justify-content-end mb-3 gap-2">
+        <Link to="/reporte-casos" className="btn btn-outline-primary btn-sm">
+          📊 Reporte de Casos
+        </Link>
+        <Link to="/reporte-logs" className="btn btn-outline-danger btn-sm">
+          🚫 Intentos Fallidos
+        </Link>
+      </div>
 
       <h2 className="mb-4">⚖️ Gestión de Casos</h2>
 
