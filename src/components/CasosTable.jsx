@@ -4,8 +4,8 @@ export default function CasosTable({ casos, onCambiarEstado }) {
   const columnas = [
     { name: 'Número de Caso', selector: row => row.numero_caso, sortable: true },
     { name: 'Estado', selector: row => row.estado, sortable: true },
-    { name: 'Fiscal', selector: row => row.id_fiscal_actual },
-    { name: 'Fiscalía', selector: row => row.id_fiscalia },
+    { name: 'Fiscal', selector: row => row.nombre_fiscal },
+    { name: 'Fiscalía', selector: row => row.nombre_fiscalia },
     {
       name: 'Acciones',
       cell: row => (
@@ -31,8 +31,8 @@ export default function CasosTable({ casos, onCambiarEstado }) {
       allowOverflow: true,
       button: true
     }
-
   ];
+
 
   return (
     <DataTable
