@@ -1,7 +1,32 @@
 import { useEffect, useState } from 'react';
 import api from '../api/axiosInstance';
+import CasosTable from '../components/CasosTable';
+
+
+
 
 export default function CasosPage() {
+
+  const [fiscalias, setFiscalias] = useState([]);
+  const [fiscales, setFiscales] = useState([]);
+  
+  useEffect(() => {
+    cargarCasos();
+    cargarFiscalias();
+  }, []);
+
+  const cargarFiscalias = async () => {
+    const res = await api.get('/fiscalias');
+    setFiscalias(res.data);
+  };
+
+  const cargarFiscales = async (idFiscalia) => {
+    const res = await api.get(`/fiscales/fiscalia/${idFiscalia}`);
+    setFiscales(res.data);
+  };
+
+
+
   const [casos, setCasos] = useState([]);
   const [form, setForm] = useState({
     numero_caso: '',
@@ -19,8 +44,20 @@ export default function CasosPage() {
   };
 
   const crearCaso = async () => {
-    await api.post('/casos', form);
-    cargarCasos();
+    const { numero_caso, descripcion, id_fiscal_actual, id_fiscalia } = form;
+
+    if (!numero_caso || !descripcion || !id_fiscal_actual || !id_fiscalia) {
+      alert('Todos los campos son obligatorios para crear un caso.');
+      return;
+    }
+
+    try {
+      await api.post('/casos', form);
+      cargarCasos();
+      alert('Caso creado correctamente');
+    } catch (error) {
+      alert('Error al crear caso');
+    }
   };
 
   const cambiarEstado = async (id, nuevoEstado) => {
@@ -29,9 +66,21 @@ export default function CasosPage() {
   };
 
   const reasignarFiscal = async () => {
-    await api.post('/casos/reasignar', reasignar);
-    cargarCasos();
+    const { id_caso, id_fiscal_destino } = reasignar;
+
+    if (!id_caso || !id_fiscal_destino) {
+      alert('Debe ingresar el ID del caso y del fiscal destino.');
+      return;
+    }
+
+    try {
+      const res = await api.post('/casos/reasignar', reasignar);
+      alert(res.data.mensaje || 'Reasignado con éxito');
+    } catch (error) {
+      alert(error.response?.data?.error || 'No se pudo reasignar el caso');
+    }
   };
+
 
   useEffect(() => {
     cargarCasos();
@@ -53,12 +102,31 @@ export default function CasosPage() {
             <div className="col-md-6">
               <input className="form-control" placeholder="Descripción" onChange={e => setForm({ ...form, descripcion: e.target.value })} />
             </div>
+            
             <div className="col-md-4">
-              <input className="form-control" placeholder="ID Fiscal" onChange={e => setForm({ ...form, id_fiscal_actual: e.target.value })} />
+              <select className="form-select" onChange={e => {
+                setForm({ ...form, id_fiscalia: e.target.value });
+                cargarFiscales(e.target.value); // actualizar fiscales disponibles
+              }}>
+                <option value="">Seleccione fiscalía</option>
+                {fiscalias.map(f => (
+                  <option key={f.id} value={f.id}>{f.nombre}</option>
+                ))}
+              </select>
             </div>
+
             <div className="col-md-4">
-              <input className="form-control" placeholder="ID Fiscalía" onChange={e => setForm({ ...form, id_fiscalia: e.target.value })} />
+              <select className="form-select" onChange={e => setForm({ ...form, id_fiscal_actual: e.target.value })}>
+                <option value="">Seleccione fiscal</option>
+                {fiscales.map(f => (
+                  <option key={f.id} value={f.id}>{f.nombre}</option>
+                ))}
+              </select>
             </div>
+
+
+
+
             <div className="col-md-4 d-grid">
               <button className="btn btn-primary" onClick={crearCaso}>Crear</button>
             </div>
@@ -67,25 +135,7 @@ export default function CasosPage() {
       </div>
 
       <div className="mb-4">
-        <h5>📂 Casos Registrados</h5>
-        {casos.length === 0 ? (
-          <p className="text-muted">No hay casos registrados.</p>
-        ) : (
-          casos.map(caso => (
-            <div key={caso.id} className="card mb-3">
-              <div className="card-body">
-                <h6 className="card-title">
-                  <strong>{caso.numero_caso}</strong> — <span className="badge bg-secondary">{caso.estado}</span>
-                </h6>
-                <p className="card-text">Fiscal: {caso.id_fiscal_actual} | Fiscalía: {caso.id_fiscalia}</p>
-                <div className="btn-group">
-                  <button className="btn btn-outline-warning btn-sm" onClick={() => cambiarEstado(caso.id, 'en_progreso')}>Marcar En Progreso</button>
-                  <button className="btn btn-outline-success btn-sm" onClick={() => cambiarEstado(caso.id, 'cerrado')}>Marcar Cerrado</button>
-                </div>
-              </div>
-            </div>
-          ))
-        )}
+        <CasosTable casos={casos} onCambiarEstado={cambiarEstado} />
       </div>
 
       <div className="card">
