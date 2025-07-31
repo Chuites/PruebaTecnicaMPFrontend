@@ -1,11 +1,19 @@
 import { useEffect, useState } from 'react';
 import api from '../api/axiosInstance';
 import CasosTable from '../components/CasosTable';
+import { useNavigate } from 'react-router-dom';
 
 
 
 
 export default function CasosPage() {
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const user = localStorage.getItem('usuario');
+    if (!user) navigate('/login');
+  }, []);
 
   const [fiscalias, setFiscalias] = useState([]);
   const [fiscales, setFiscales] = useState([]);
@@ -15,6 +23,14 @@ export default function CasosPage() {
     cargarFiscalias();
   }, []);
 
+  useEffect(() => {
+    cargarCasos();
+    cargarFiscalias();
+    cargarCasosDisponibles();
+    cargarTodosFiscales(); // o según lógica
+  }, []);
+
+
   const cargarFiscalias = async () => {
     const res = await api.get('/fiscalias');
     setFiscalias(res.data);
@@ -23,6 +39,21 @@ export default function CasosPage() {
   const cargarFiscales = async (idFiscalia) => {
     const res = await api.get(`/fiscales/fiscalia/${idFiscalia}`);
     setFiscales(res.data);
+  };
+
+
+  const [casosDisponibles, setCasosDisponibles] = useState([]);
+  const [fiscalesDisponibles, setFiscalesDisponibles] = useState([]);
+
+  const cargarCasosDisponibles = async () => {
+    const res = await api.get('/casos');
+    setCasosDisponibles(res.data);
+  };
+
+  const cargarTodosFiscales = async () => {
+    // Opcional: crea un nuevo endpoint si quieres obtener todos
+    const res = await api.get('/fiscales/fiscalia/1'); // o según fiscalía seleccionada
+    setFiscalesDisponibles(res.data);
   };
 
 
@@ -143,11 +174,23 @@ export default function CasosPage() {
           <h5 className="card-title">🔄 Reasignar Fiscal</h5>
           <div className="row g-2">
             <div className="col-md-5">
-              <input className="form-control" placeholder="ID Caso" onChange={e => setReasignar({ ...reasignar, id_caso: e.target.value })} />
+              <select className="form-select" onChange={e => setReasignar({ ...reasignar, id_caso: e.target.value })}>
+                <option value="">Seleccione caso</option>
+                {casosDisponibles.map(c => (
+                  <option key={c.id} value={c.id}>{c.numero_caso} — {c.estado}</option>
+                ))}
+              </select>
             </div>
+
             <div className="col-md-5">
-              <input className="form-control" placeholder="ID Fiscal destino" onChange={e => setReasignar({ ...reasignar, id_fiscal_destino: e.target.value })} />
+              <select className="form-select" onChange={e => setReasignar({ ...reasignar, id_fiscal_destino: e.target.value })}>
+                <option value="">Seleccione fiscal</option>
+                {fiscalesDisponibles.map(f => (
+                  <option key={f.id} value={f.id}>{f.nombre}</option>
+                ))}
+              </select>
             </div>
+
             <div className="col-md-2 d-grid">
               <button className="btn btn-dark" onClick={reasignarFiscal}>Reasignar</button>
             </div>
