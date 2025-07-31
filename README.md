@@ -1,4 +1,4 @@
-# Frontend - Gestión de Casos Judiciales (Ministerio Público de Guatemala)
+# Frontend - Gestión de Casos (Ministerio Público de Guatemala)
 
 Interfaz web desarrollada con React para facilitar la gestión de casos, visualización de reportes y control de fiscales. Compatible con la API RESTful del backend.
 
@@ -13,33 +13,40 @@ Interfaz web desarrollada con React para facilitar la gestión de casos, visuali
 ## 📁 Estructura
 
 /pages # Vistas: Casos, Login, Reportes
+
 /components # Tabla reutilizable
+
 /api # Instancia Axios
+
 /routes # Definición de rutas
+
 App.jsx # Componente raíz
+
 main.jsx # Entrada principal
+
 
 
 ## ⚙️ Configuración
 
 1. Clonar el repositorio:
    ```bash
-   git clone https://github.com/usuario/frontend-mp.git
-   cd frontend-mp
+   git clone https://github.com/Chuites/PruebaTecnicaMPFrontend.git
+   cd PruebaTecnicaMPFrontend
 
-    Instalar dependencias:
 
-npm install
+Instalar dependencias y ejecutar la aplicación:
 
-Ejecutar la aplicación:
-
+    npm install
+    
     npm run dev
 
-    Asegúrate de que el archivo axiosInstance.js apunte al backend:
+Asegúrate de que el archivo axiosInstance.js apunte al backend:
+    
+    const api = axios.create({
+     baseURL: 'http://localhost:3000/api'
+    });
 
-const api = axios.create({
-  baseURL: 'http://localhost:3000/api'
-});
+
 
 🧩 Funcionalidades
 
