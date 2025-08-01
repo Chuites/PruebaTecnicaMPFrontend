@@ -23,13 +23,7 @@ export default function CasosPage() {
   useEffect(() => {
     cargarCasos();
     cargarFiscalias();
-  }, []);
-
-  useEffect(() => {
-    cargarCasos();
-    cargarFiscalias();
     cargarCasosDisponibles();
-    cargarTodosFiscales(); // o según lógica
   }, []);
 
 
@@ -52,9 +46,12 @@ export default function CasosPage() {
     setCasosDisponibles(res.data);
   };
 
-  const cargarTodosFiscales = async () => {
-    // Opcional: crea un nuevo endpoint si quieres obtener todos
-    const res = await api.get('/fiscales/fiscalia/1'); // o según fiscalía seleccionada
+  const cargarTodosFiscales = async (idFiscalia) => {
+    if (!idFiscalia) {
+      setFiscalesDisponibles([]);
+      return;
+    }
+    const res = await api.get(`/fiscales/fiscalia/${idFiscalia}`);
     setFiscalesDisponibles(res.data);
   };
 
@@ -115,10 +112,6 @@ export default function CasosPage() {
   };
 
 
-  useEffect(() => {
-    cargarCasos();
-  }, []);
-
   return (
     
     <div className="container bg-white shadow p-4 rounded" style={{ width: '100%', maxWidth: 900 }}>
@@ -156,6 +149,7 @@ export default function CasosPage() {
               <select className="form-select" onChange={e => {
                 setForm({ ...form, id_fiscalia: e.target.value });
                 cargarFiscales(e.target.value); // actualizar fiscales disponibles
+                cargarTodosFiscales(e.target.value); // actualizar fiscales para reasignación
               }}>
                 <option value="">Seleccione fiscalía</option>
                 {fiscalias.map(f => (
